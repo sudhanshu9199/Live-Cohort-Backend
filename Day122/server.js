@@ -27,6 +27,33 @@ app.get('/notes', async (req, res) => {
         message: "Notes fetch successfully!",
         notes
     })
+});
+
+app.delete('/notes/:id', async (req, res) => {
+    const noteId = req.params.id;
+
+    await noteModel.findOneAndDelete({
+        _id : noteId
+    })
+
+    res.json({
+        message: "note deleted!"
+    })
+})
+
+app.patch('/notes/:id', async(req, res) => {
+    const noteId = req.params.id;
+    const { title } = req.body;
+
+    await noteModel.findOneAndUpdate({
+        _id: noteId
+    }, {
+        title: title
+    })
+
+    res.json({
+        message: "note title updated!"
+    })
 })
 
 app.listen(3000, () => {
