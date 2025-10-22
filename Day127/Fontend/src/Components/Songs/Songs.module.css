@@ -1,0 +1,31 @@
+.MusicContainer {
+  margin-top: 3rem;
+  padding: 0 2rem;
+}
+.MusicContainer h3 {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 2vw;
+}
+.MusicContainer ul {
+  width: 70%;
+}
+.MusicContainer ul li {
+  margin: 1.5rem 0;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.MusicContainer ul li p:nth-child(1) {
+  font-size: 1.3vw;
+  font-weight: 600;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans", Arial, sans-serif;
+}
+.MusicContainer ul li p:nth-child(2) {
+  font-size: 1.2vw;
+  font-family: "Courier New", Courier, monospace;
+}
+.MusicContainer ul li i {
+  font-size: 1.5vw;
+  cursor: pointer;
+}/*# sourceMappingURL=Songs.module.css.map */

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import * as faceapi from "face-api.js";
 import style from "./FacialExpression.module.scss";
+import Songs from "../Songs/Songs.jsx";
 
 export default function FacialExpression() {
   const videoRef = useRef();
@@ -99,9 +100,8 @@ export default function FacialExpression() {
         <p>Your current mood is being analyzed in real-time. Enjoy music tailored to your feelings.</p>
       <button onClick={detectMood}>Detect</button>
         </div>
-        
       </div>
-
+      <Songs />
     </div>
   );
 }
