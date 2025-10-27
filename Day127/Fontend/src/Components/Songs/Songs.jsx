@@ -1,19 +1,6 @@
-import { useState } from 'react'
 import style from './Songs.module.scss'
-const Songs = () => {
+const Songs = ({songs}) => {
 
-    const [songs, setSongs] = useState([
-        {
-            title: 'test_title',
-            artist: 'test_artist',
-            url: "test_url"
-        },
-        {
-            title: 'test_title2',
-            artist: 'test_artist',
-            url: "test_url"
-        },
-    ])
   return (
     <div className={style.MusicContainer}>
         <h3>Recommended Tracks</h3>

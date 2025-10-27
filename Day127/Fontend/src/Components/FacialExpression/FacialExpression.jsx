@@ -1,74 +1,89 @@
 import { useEffect, useRef, useState } from "react";
 import * as faceapi from "face-api.js";
 import style from "./FacialExpression.module.scss";
-import Songs from "../Songs/Songs.jsx";
+import axios from 'axios';
+// import '@tensorflow/tfjs-node';
 
-export default function FacialExpression() {
+export default function FacialExpression({ setSongs}) {
   const videoRef = useRef();
   const [expression, setExpression] = useState("");
 
   const loadModels = async () => {
     const MODEL_URL = "/models";
 
-    // ✅ set backend first
-    await faceapi.tf
-      .setBackend("webgl")
-      .catch(() => faceapi.tf.setBackend("cpu"));
-    await faceapi.tf.ready();
+    try {
+      // ✅ set backend properly
+      await faceapi.tf.setBackend("webgl");
+      // await faceapi.tf.ready();
+    console.log("✅ Using backend:", faceapi.tf.getBackend());
+    } catch (err) {
+      console.warn("⚠️ WebGL failed, switching to CPU...");
+      await faceapi.tf.setBackend("cpu");
+      // await faceapi.tf.ready();
+    }
 
-    // then load models
-    await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
-    await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
+    // ✅ load models
+    await Promise.all([
+      faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+      faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
+    ]);
+
+    console.log("✅ Models loaded successfully");
   };
 
   const startVideo = () => {
     navigator.mediaDevices
       .getUserMedia({ video: true })
       .then((stream) => {
-        videoRef.current.srcObject = stream;
+        if (videoRef.current) videoRef.current.srcObject = stream;
       })
       .catch((err) => console.error("Error accessing webcam: ", err));
   };
 
   async function detectMood() {
-    const detections = await faceapi
-      .detectAllFaces(
-        videoRef.current,
-        new faceapi.TinyFaceDetectorOptions({
-          inputSize: 416, // default 224 — bigger = better detection
-          scoreThreshold: 0.5,
-        })
-      )
-      .withFaceExpressions();
-
-    // ✅ fix: check if any face is detected
-    if (!detections || detections.length === 0) {
-      console.log("No face detected ❌");
+    if (!videoRef.current || videoRef.current.readyState < 2) {
+      console.warn("⚠️ Video not ready yet");
       return;
     }
-    let mostProableExpression = "";
-    let highestScore = 0;
 
-    for (const expression of Object.keys(detections[0].expressions)) {
-      const score = detections[0].expressions[expression];
-      if (score > highestScore) {
-        highestScore = score;
-        mostProableExpression = expression;
+    try {
+      const detections = await faceapi
+        .detectAllFaces(
+          videoRef.current,
+          new faceapi.TinyFaceDetectorOptions({
+            inputSize: 416,
+            scoreThreshold: 0.5,
+          })
+        )
+        .withFaceExpressions();
+
+      if (!detections || detections.length === 0) {
+        console.log("No face detected ❌");
+        setExpression("No face detected");
+        return;
       }
-    }
 
-    console.log(mostProableExpression);
-    setExpression(mostProableExpression);
+      // ✅ Find top expression
+      const exprs = detections[0].expressions;
+      const top = Object.keys(exprs).reduce((a, b) =>
+        exprs[a] > exprs[b] ? a : b
+      );
+
+      console.log("😃 Expression:", top);
+      setExpression(top);
+
+      // ✅ Send mood to backend
+      const response = await axios.get(
+        `http://localhost:3000/songs?mood=${top}`
+      );
+      console.log("🎵 Songs:", response.data);
+    } catch (err) {
+      console.error("❌ Detection error:", err);
+    }
   }
 
   useEffect(() => {
     loadModels().then(() => {
-      console.log(
-        "✅ Models loaded:",
-        faceapi.nets.tinyFaceDetector.isLoaded,
-        faceapi.nets.faceExpressionNet.isLoaded
-      );
-
       console.log("✅ Backend:", faceapi.tf.getBackend());
       startVideo();
 
@@ -78,10 +93,6 @@ export default function FacialExpression() {
       });
     });
 
-    console.log("Video width:", videoRef.current.videoWidth);
-    console.log("Models loaded:", faceapi.nets.tinyFaceDetector.isLoaded);
-
-    console.log("Backend:", faceapi.tf.getBackend());
   }, []);
   return (
     <div className={style.screen}>
@@ -101,7 +112,6 @@ export default function FacialExpression() {
       <button onClick={detectMood}>Detect</button>
         </div>
       </div>
-      <Songs />
     </div>
   );
 }

@@ -1,16 +1,17 @@
 let ImageKit = require('imagekit');
-
+let mongoose = require('mongoose');
 let imagekit = new ImageKit({
     publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
     privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
     urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT
 });
 
-function uploadFie(file) {
+function uploadFile(file) {
     return new Promise((resolve, reject) => {
         imagekit.upload({
             file:file.buffer,
-            fileName: "helloCohort"
+            fileName: new mongoose.Types.ObjectId().toString(),
+            folder: "Music"
         }, (error, result) => {
             if (error) {
                 reject(error);
@@ -22,4 +23,4 @@ function uploadFie(file) {
     });
 }
 
-module.exports = uploadFie;
+module.exports = uploadFile;
