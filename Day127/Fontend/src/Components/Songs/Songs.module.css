@@ -25,7 +25,13 @@
   font-size: 1.2vw;
   font-family: "Courier New", Courier, monospace;
 }
-.MusicContainer ul li i {
+.MusicContainer ul li .playPauseBtn audio {
+  display: none;
+}
+.MusicContainer ul li .playPauseBtn button {
+  background: none;
+  border: none;
+}
+.MusicContainer ul li .playPauseBtn button i {
   font-size: 1.5vw;
-  cursor: pointer;
 }/*# sourceMappingURL=Songs.module.css.map */

@@ -15,21 +15,31 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      
+
       p:nth-child(1) {
-          font-size: 1.3vw;
-          font-weight: 600;
-          font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        font-size: 1.3vw;
+        font-weight: 600;
+        font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+          "Lucida Sans", Arial, sans-serif;
       }
-        p:nth-child(2) {
-            font-size: 1.2vw;
-            font-family: 'Courier New', Courier, monospace;
+      p:nth-child(2) {
+        font-size: 1.2vw;
+        font-family: "Courier New", Courier, monospace;
+      }
+
+      .playPauseBtn {
+        audio {
+          display: none;
         }
 
-        i {
+        button {
+          background: none;
+          border: none;
+          i {
             font-size: 1.5vw;
-            cursor: pointer;
+          }
         }
+      }
     }
   }
 }
