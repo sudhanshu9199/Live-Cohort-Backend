@@ -1,0 +1,4 @@
+POST /register => user create/register krna => status 201
+POST /login => check username & password then loggedIn the user
+GET /user => get user Data [protected]
+GET /logout => loggedOut
